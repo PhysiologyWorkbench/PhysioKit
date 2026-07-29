@@ -50,6 +50,28 @@ Reference implementation to port and re-sync against:
 - Key constants: `alpha=5.2`, `window_width=91`, `c1=0.13`, `c2=0.17`,
   `medfilt_order=11`.
 
+## ECG-derived respiration
+
+`respiratoryRate` — the R-wave amplitude (RPA) variant of ECG-derived
+respiration: breathing swings the heart's electrical axis and the chest's
+impedance, so the R-wave amplitudes carry the respiratory modulation and its
+frequency is the breathing rate.
+
+> Moody GB, Mark RG, Zoccola A, Mantero S. "Derivation of respiratory signals
+> from multi-lead ECGs." *Computers in Cardiology.* 1985;12:113–116.
+
+Reference implementations to re-sync against:
+
+- NeuroKit2 — `neurokit2/ecg/ecg_rsp.py` and `neurokit2/signal/signal_rate.py`.
+- Repository: https://github.com/neuropsychology/NeuroKit
+- Pinned commit: `56075c05aae819a4962fcd9eeeac3ddf86b0de51` (2026-02-22)
+- Key constants: respiratory band 0.1–0.5 Hz (6–30 breaths/min), resampled to
+  4 Hz, at least three cycles of the slowest breath in the band.
+
+One guard is ours rather than the reference's: the strongest band component must
+exceed four times the band mean, or no rate is reported. White noise reaches
+2–3 times, a real modulation 8 and up, so this refuses to read a rate off noise.
+
 ## HRV metrics
 
 `meanRR`, `rmssd`, `sdnn` — standard time-domain HRV definitions (Task Force of the
