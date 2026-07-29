@@ -20,9 +20,15 @@ public func rmssd(_ xs: [Double]) -> Double? {
 
 /// SDNN — population standard deviation of the RR intervals. Needs ≥2.
 public func sdnn(_ xs: [Double]) -> Double? {
+    standardDeviation(xs)
+}
+
+/// Population standard deviation. `nil` for fewer than two values. The spread of
+/// any sampled quantity — RR intervals as SDNN, accelerometer magnitudes as a
+/// movement index.
+public func standardDeviation(_ xs: [Double]) -> Double? {
     guard xs.count >= 2 else { return nil }
     let mean = vDSP.mean(xs)
-    let meanSquare = vDSP.meanSquare(xs)
-    let variance = meanSquare - mean * mean
+    let variance = vDSP.meanSquare(xs) - mean * mean
     return variance > 0 ? variance.squareRoot() : 0
 }
