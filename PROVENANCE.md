@@ -1,8 +1,31 @@
 # PhysioKit — algorithm provenance
 
-The RR-interval / HRV algorithms here are ports of published references. This file
-pins the upstream sources so the Swift implementations can be re-synced when the
-references change.
+The ECG / RR-interval / HRV algorithms here are ports of published references.
+This file pins the upstream sources so the Swift implementations can be re-synced
+when the references change.
+
+## R-peak detection
+
+`PanTompkinsDetector` — the classic real-time QRS detector:
+
+> Pan J, Tompkins WJ. "A real-time QRS detection algorithm." *IEEE Trans Biomed
+> Eng.* 1985;BME-32(3):230–236.
+
+Reference implementation to re-sync against:
+
+- NeuroKit2 — `neurokit2/ecg/ecg_findpeaks.py`, `_ecg_findpeaks_pantompkins`.
+- Repository: https://github.com/neuropsychology/NeuroKit
+- Pinned commit: `56075c05aae819a4962fcd9eeeac3ddf86b0de51` (2026-02-22)
+- Key constants: band-pass 5–15 Hz, 150 ms integration window, 200 ms
+  refractory, 360 ms T-wave window with a 0.5 slope ratio, threshold
+  `NPK + 0.25 (SPK − NPK)`, peak/noise adaptation 0.125, search-back at 1.66 ×
+  the RR average with the half threshold, RR acceptance band 92 %–116 %.
+
+Two deliberate departures, both noted in the source: the filters are Butterworth
+biquads derived from the sample rate rather than the paper's integer-coefficient
+forms, which are fixed at 200 Hz (the H10 streams 130 Hz); and the paper's halved
+thresholds for irregular rhythms are not carried, there being no arrhythmia data
+here to validate that path against.
 
 ## RR artifact correction
 
