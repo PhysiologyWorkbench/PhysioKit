@@ -54,7 +54,10 @@ public func respiratoryRate(amplitudes: [Double], times: [Double],
     let mean = bins.reduce(0.0) { $0 + magnitudes[$1] } / Double(bins.count)
     guard magnitudes[peak] > 4 * mean else { return nil }
 
-    return (Double(peak) + parabolicOffset(magnitudes, at: peak)) * binWidth * 60
+    let refinedBin = min(max(Double(peak) + parabolicOffset(magnitudes, at: peak),
+                             Double(bins.lowerBound)),
+                         Double(bins.upperBound))
+    return refinedBin * binWidth * 60
 }
 
 /// Linear interpolation onto an evenly-spaced grid. The series is monotonic in
@@ -93,11 +96,12 @@ private func detrend(_ values: inout [Double]) {
 }
 
 /// Sub-bin peak position from a parabola through the peak and its neighbours.
-private func parabolicOffset(_ magnitudes: [Double], at peak: Int) -> Double {
+func parabolicOffset(_ magnitudes: [Double], at peak: Int) -> Double {
     guard peak > 0, peak + 1 < magnitudes.count else { return 0 }
     let (left, centre, right) = (magnitudes[peak - 1], magnitudes[peak], magnitudes[peak + 1])
     let curvature = left - 2 * centre + right
-    return curvature < 0 ? 0.5 * (left - right) / curvature : 0
+    guard curvature < 0 else { return 0 }
+    return min(max(0.5 * (left - right) / curvature, -0.5), 0.5)
 }
 
 private func nextPowerOfTwo(_ n: Int) -> Int {

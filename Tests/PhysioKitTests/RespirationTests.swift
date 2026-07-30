@@ -56,6 +56,11 @@ struct RespirationTests {
         #expect(respiratoryRate(amplitudes: amplitudes, times: times) == nil)
     }
 
+    @Test func parabolicRefinementCannotLeaveItsBin() {
+        #expect(parabolicOffset([10.1, 10.0, 9.8], at: 1) == -0.5)
+        #expect(parabolicOffset([9.8, 10.0, 10.1], at: 1) == 0.5)
+    }
+
     @Test func rejectsMismatchedOrTinyInput() {
         #expect(respiratoryRate(amplitudes: [1, 2, 3], times: [0, 1]) == nil)
         #expect(respiratoryRate(amplitudes: [], times: []) == nil)
