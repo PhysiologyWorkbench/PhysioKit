@@ -1,27 +1,34 @@
 # PhysioKit
 
-Physiological signal algorithms in Swift 6: heart-rate-variability metrics, RR
-artifact correction, R-peak detection, and ECG-derived respiration. Ports of
-published methods, with every reference pinned in
-[PROVENANCE.md](PROVENANCE.md).
+[![CI](https://github.com/PhysiologyWorkbench/PhysioKit/actions/workflows/ci.yml/badge.svg)](https://github.com/PhysiologyWorkbench/PhysioKit/actions/workflows/ci.yml)
 
-Dependency-free — Accelerate only, no packages. It knows nothing about
-Bluetooth, files or user interfaces: plain data in, plain data out.
+Physiological signal algorithms in Swift 6:
+- heart-rate-variability metrics,
+- RR artifact correction,
+- R-peak detection, and
+- ECG-derived respiration.
+Ports of published methods, with every reference pinned in [PROVENANCE.md](PROVENANCE.md).
+
+Dependency-free — Apple Accelerate only, no packages.
+
+> **Largely written by Claude.** Not thoroughly reviewed by a human
+> and no independent security review.  Caveat emptor.
+> Not a medical device, and not intended for diagnosis or treatment.
 
 ## What is in it
 
 | | |
 | --- | --- |
 | `meanRR`, `rmssd`, `sdnn`, `standardDeviation` | time-domain HRV metrics over an RR series, via vDSP |
-| `RRArtifactCorrector` | the corrector seam — one RR interval in, a value plus an artifact flag out |
+| `RRArtifactCorrector` | a corrector seam — one RR interval in, a value plus an artifact flag out |
 | `PercentageJumpCorrector` | causal percentage-jump rejection with a local expectation |
-| `RPeakDetector` / `RPeak` | the detector seam — samples in, absolute sample indices out |
+| `RPeakDetector` / `RPeak` | a detector seam — samples in, absolute sample indices out |
 | `PanTompkinsDetector` | causal Pan–Tompkins QRS detection, batch-fed, fiducial measured off the raw signal |
 | `respiratoryRate` | breathing rate from R-wave amplitude modulation, with a measured noise guard |
 
 ## Requirements
 
-Swift 6.0, macOS 13+ / iOS 16+. No dependencies.
+Swift 6.0, macOS 13+ / iOS 16+.
 
 ## Use
 
@@ -33,12 +40,14 @@ Swift 6.0, macOS 13+ / iOS 16+. No dependencies.
 var detector = PanTompkinsDetector(sampleRate: 130)
 var corrector = PercentageJumpCorrector()
 
-for batch in ecgBatches {                       // [Double], microvolts
+for batch in ecgBatches {                // [Double], microvolts
     for peak in detector.accept(batch) {
         // peak.sampleIndex is absolute since the last reset()
         let rr = msBetween(peak, previous)
         let corrected = corrector.accept(rr)
-        if !corrected.isArtifact { rrSeries.append(corrected.valueMs) }
+        if !corrected.isArtifact {
+          rrSeries.append(corrected.valueMs)
+        }
     }
 }
 
@@ -57,10 +66,9 @@ swift build
 swift test        # 23 tests
 ```
 
-The tests run against synthetic signals. A synthetic signal is not a body: these
-algorithms have also been validated against a Polar H10 over a 26-minute
-annotated protocol with a breathing metronome, and the evidence for that lives
-with the sensor rather than here.
+The tests run against synthetic signals.
+These algorithms have also been minimally validated against
+a Polar H10 over a 26-minute annotated protocol with a breathing metronome.
 
 ## Design notes
 
@@ -77,5 +85,9 @@ with the sensor rather than here.
 
 ## Licence
 
-Not yet stated — the repository is pre-publication. The referenced upstream
-implementations carry their own licences; see `PROVENANCE.md`.
+MIT — see [LICENSE](LICENSE).
+Referenced upstream implementations carry their own licences; see
+[PROVENANCE.md](PROVENANCE.md).
+
+Patches welcome: [CONTRIBUTING.md](CONTRIBUTING.md). Releases are listed in
+[CHANGELOG.md](CHANGELOG.md).

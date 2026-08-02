@@ -4,7 +4,7 @@ Running log of high-level lessons from building this library. Newest first. Each
 entry is dated and kept terse — "what I wish I'd known starting", not a step log.
 
 Entries here are this repo's slice of a log that was kept for the whole
-Physiology Workbench family before it split into separate repositories, so a
+Physiology Workbench family before it was split into separate repositories, so a
 dated heading may appear in a sibling repo too, carrying that repo's bullets.
 
 ## 2026-07-29 — Derived signals: the synthetic signal is not the body

@@ -78,3 +78,9 @@ exceed four times the band mean, or no rate is reported. White noise reaches
 European Society of Cardiology and the North American Society of Pacing and
 Electrophysiology, 1996). SDNN and RMSSD use the population (divide-by-N) form.
 Computed via Accelerate / vDSP.
+
+## Licensing of the references
+
+No upstream source is vendored here. The Swift was written from the papers, with the
+NeuroKit2 implementations named above read as a cross-check on constants and edge
+cases; NeuroKit2 is itself MIT-licensed. This package is MIT — see `LICENSE`.
