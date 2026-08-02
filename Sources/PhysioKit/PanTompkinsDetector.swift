@@ -93,8 +93,13 @@ public struct PanTompkinsDetector: RPeakDetector {
         bandPassed.append(highPass.filter(lowPass.filter(sample)))
         // Five-point derivative, then squaring and a moving-window integration:
         // the QRS becomes one broad bump whose width is the complex's duration.
-        let slope = (2 * (bandPassed[index] ?? 0) + (bandPassed[index - 1] ?? 0)
-                     - (bandPassed[index - 3] ?? 0) - 2 * (bandPassed[index - 4] ?? 0)) / 8
+        // The taps are bound one at a time because Swift 6.1 fails to type-check
+        // the fused expression — four optionals, four literals — in reasonable time.
+        let tap0 = bandPassed[index] ?? 0
+        let tap1 = bandPassed[index - 1] ?? 0
+        let tap3 = bandPassed[index - 3] ?? 0
+        let tap4 = bandPassed[index - 4] ?? 0
+        let slope = (2 * tap0 + tap1 - tap3 - 2 * tap4) / 8
         derivatives.append(slope)
         integratorSum -= squares[index - integrationWindow] ?? 0
         integratorSum += slope * slope
