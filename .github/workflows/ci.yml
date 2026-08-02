@@ -21,7 +21,7 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: swift --version
       - run: swift build
       - run: swift test
@@ -33,7 +33,7 @@ jobs:
     # iOS is a hard requirement (CLAUDE.md) and `swift test` never exercises it,
     # so the platform is checked by a build rather than by the manifest alone.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: xcodebuild -version
       - run: |
           xcodebuild build -quiet \
